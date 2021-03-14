@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+<ul>
+{% for lists in list %}
+        <li>
+            {{ lists }}
+        </li>
+{% endfor %}
+</ul>
+</br>
+<span>
+    {{ error }}
+</span></br>
+<span> {{ panic }}</span>
+</body>
+</html>

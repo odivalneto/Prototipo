@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Push List</title>
+</head>
+<body>
+
+<form style="width: 600px" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="document" placeholder="Insira o arquivo">
+    <button type="submit">Executar</button>
+
+</form>
+</body>
+</html>
