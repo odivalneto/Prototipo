@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
-from django.core.files.uploadhandler import TemporaryFileUploadHandler
+import os
+import io
 import pyrebase
+import tempfile
+
 import json
 
 config = {
@@ -17,6 +20,23 @@ config = {
 firebase = pyrebase.initialize_app(config)
 authe = firebase.auth()
 database = firebase.database()
+storage = firebase.storage()
+
+
+def del_line_bug(url):
+    with open(url, "r") as x:
+        lineNull = x.readlines()
+        x.close()
+
+    if 'bug_type' in lineNull[0]:
+        del lineNull[0]
+        new_file = open(url, 'w+')
+        for line in lineNull:
+            new_file.write(line)
+        new_file.close()
+        print('ok')
+    else:
+        print('error')
 
 
 def read_Panic(modelid, panicString):
@@ -45,24 +65,44 @@ def read_Panic(modelid, panicString):
 
 
 def singIn(request):
+
+    panicString = ''
+    build = ''
+    model = ''
     if request.method == 'POST' and request.FILES['document']:
-        myfile = request.FILES['document']
-        fs = FileSystemStorage('media/')
-        fs.save(myfile.name, myfile)
+        myfile = request.FILES['document'].read().decode('utf-8')
 
-        with open('media/' + myfile.name, 'r+') as f:
-            panic = json.load(f)
+        temp = tempfile.TemporaryFile(mode='w+t')
+        load = tempfile.TemporaryFile(mode='w+t')
 
-            panicString = (panic['panicString'])
-            model_id = (panic['product'])
 
-            read_Panic(model_id, panicString)
 
-        fs.delete(myfile.name)
+        try:
+            temp.write(myfile)
+            temp.seek(0)
+            out = temp.readlines()
 
-        print(myfile.name)
+            if 'bug_type' in out[0]:
+                del out[0]
+                for line in out:
+                    load.write(line)
+            else:
+                print('error')
 
-    return render(request, 'singin.html', {})
+            load.seek(0)
+            panic = json.load(load)
+
+            panicString = panic['panicString']
+            build = panic['build']
+            model = panic['product']
+
+        finally:
+            temp.close()
+            load.close()
+            print('End of Life')
+
+
+    return render(request, 'singin.html', {'panic': panicString, 'model': model, 'build': build})
 
 
 def postsingin(request):
