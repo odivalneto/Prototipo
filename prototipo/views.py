@@ -49,6 +49,7 @@ def singIn(request):
                     if model in load_list.val():
                         print('achou')
                         for product_ids in database.child('iPhones').child(model_list.key()).get().each():
+                            print(product_ids.val())
                             if model in product_ids.val():
                                 for panics in database.child('iPhones').child(model_list.key()).child(
                                         'string').get().each():
@@ -82,3 +83,42 @@ def postsingin(request):
     # user = authe.sign_in_with_email_and_password(email,pwd)
 
     return render(request, 'postsigin.html', )
+
+
+def new_panic(request):
+    list = database.child('iPhones').get().val()
+
+    if request.method == 'POST':
+        select = request.POST.get('select')
+        panic = request.POST.get('panic')
+        solution = request.POST.get('solution')
+
+        data = {
+            panic: solution
+        }
+
+        database.child('iPhones').child(select).child('string').update(data)
+
+    if request.method == 'POST':
+        model = request.POST.get('model')
+        product = request.POST.get('product')
+
+        print(model)
+        print(product)
+
+        count = database.child('iPhones').child(model).child('product_id').get()
+        print(count.key())
+
+        i = ''
+
+        for i in count.each():
+            print(i)
+
+        data2 = {
+            i: product
+        }
+
+        # database.child('iPhones').update(model)
+        database.child('iPhones').child(model).child('product_id').update(data2)
+
+    return render(request, 'newpanic.html', {'list': list})
