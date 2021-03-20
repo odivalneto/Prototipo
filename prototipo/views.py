@@ -101,24 +101,15 @@ def new_panic(request):
 
     if request.method == 'POST':
         model = request.POST.get('model')
-        product = request.POST.get('product')
+        product1 = request.POST.get('product1')
+        product2 = request.POST.get('product2')
 
-        print(model)
-        print(product)
+        data2 = {0: product1, 1: product2}
 
         count = database.child('iPhones').child(model).child('product_id').get()
-        print(count.key())
+        print(count.val())
 
-        i = ''
 
-        for i in count.each():
-            print(i)
-
-        data2 = {
-            i: product
-        }
-
-        # database.child('iPhones').update(model)
-        database.child('iPhones').child(model).child('product_id').update(data2)
+        database.child('iPhones').child(model).child('product_id').set(data2)
 
     return render(request, 'newpanic.html', {'list': list})
