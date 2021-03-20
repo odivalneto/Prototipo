@@ -1,10 +1,6 @@
-from django.shortcuts import render
-from django.core.files.storage import FileSystemStorage
-import os
-import io
+from django.shortcuts import render, redirect
 import pyrebase
 import tempfile
-
 import json
 
 config = {
@@ -23,60 +19,11 @@ database = firebase.database()
 storage = firebase.storage()
 
 
-def del_line_bug(url):
-    with open(url, "r") as x:
-        lineNull = x.readlines()
-        x.close()
-
-    if 'bug_type' in lineNull[0]:
-        del lineNull[0]
-        new_file = open(url, 'w+')
-        for line in lineNull:
-            new_file.write(line)
-        new_file.close()
-        print('ok')
-    else:
-        print('error')
-
-
-def read_Panic(modelid, panicString):
-    error = ''
-    panic_reader = ''
-    model_id = ''
-    iphone = database.child('iPhones').get()
-    string = database.child('iPhones').child('iPhone X').child('string').get()
-
-    for product_ids in database.child('iPhones').child('iPhone X').get().each():
-        if modelid in product_ids.val():
-            print(modelid)
-            for panics in string.each():
-                if panics.key() in panicString:
-                    print(panics.key())
-                    print(panics.val())
-                    panic_reader = panics.val()
-                    break
-            else:
-                panic_reader = 'Error Panic não encontrado'
-            break
-        else:
-            error = 'Modelo não encontrado!'
-            break
-    return
-
-
 def singIn(request):
-
-    panicString = ''
-    build = ''
-    model = ''
     if request.method == 'POST' and request.FILES['document']:
         myfile = request.FILES['document'].read().decode('utf-8')
-
         temp = tempfile.TemporaryFile(mode='w+t')
         load = tempfile.TemporaryFile(mode='w+t')
-
-
-
         try:
             temp.write(myfile)
             temp.seek(0)
@@ -88,7 +35,6 @@ def singIn(request):
                     load.write(line)
             else:
                 print('error')
-
             load.seek(0)
             panic = json.load(load)
 
@@ -96,13 +42,38 @@ def singIn(request):
             build = panic['build']
             model = panic['product']
 
+            for model_list in database.child('iPhones').get().each():
+                print(model_list.key())
+                for load_list in database.child('iPhones').child(model_list.key()).child('product_id').get().each():
+                    print(load_list.val())
+                    if model in load_list.val():
+                        print('achou')
+                        for product_ids in database.child('iPhones').child(model_list.key()).get().each():
+                            if model in product_ids.val():
+                                for panics in database.child('iPhones').child(model_list.key()).child(
+                                        'string').get().each():
+                                    if panics.key() in panicString:
+                                        panic_val = panics.val()
+                                        panic_key = panics.key()
+                                        return render(request, 'result.html',
+                                                      {'panic': panic_val, 'model': model_list.key(),
+                                                       'build': build,
+                                                       'panic_key': panic_key})
+                                else:
+                                    panic_reader = 'Panic não cadastrado no banco de dados'
+                                    return render(request, 'result.html',
+                                                  {'panic': panic_reader, 'model': model_list.key()})
+            else:
+                error = 'Modelo não encontrado!'
+                print('Parou')
+                return render(request, 'error.html', {'error': error})
+
         finally:
             temp.close()
             load.close()
             print('End of Life')
 
-
-    return render(request, 'singin.html', {'panic': panicString, 'model': model, 'build': build})
+    return render(request, 'singin.html')
 
 
 def postsingin(request):

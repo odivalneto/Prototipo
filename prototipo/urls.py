@@ -19,6 +19,5 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.singIn),
-    path('result/',views.read_Panic)
+    path('', views.singIn, name='index')
 ]
