@@ -7,7 +7,7 @@
           integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 </head>
 <body class="container-sm">
-
+{% csrf_token %}
 <span>{{ model }}</span></br>
 <span>{{ build }}</span></br>
 <span>{{ panic_key }}</span></br>

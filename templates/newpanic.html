@@ -6,14 +6,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 </head>
-<body class="container-sm">
+<body class="container-sm mt-5">
 
 <form method="post">
     {% csrf_token %}
     <div class="col-md mb-3">
         <div class="form-floating">
             <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example"
-                    name="select">
+                    name="select" required>
                 <option selected>Selecione</option>
                 {% for lists in list %}t
                     <option>{{ lists }}</option>
@@ -23,11 +23,11 @@
         </div>
     </div>
     <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="floatingInput" placeholder="Ex. I2c4" name="panic">
+        <input type="text" class="form-control" id="floatingInput" placeholder="Ex. I2c4" name="panic" required>
         <label for="floatingInput">Panic</label>
     </div>
     <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="floatingPassword" placeholder="Solução" name="solution">
+        <input type="text" class="form-control" id="floatingPassword" placeholder="Solução" name="solution" required>
         <label for="floatingPassword">Solução</label>
     </div>
 
@@ -61,22 +61,22 @@
                 <h5 class="modal-title" id="staticBackdropLabel">Novo Modelo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="post">
+            <form action="/create_new/" method="post" >
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" placeholder="Ex. I2c4" name="model">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="Ex. I2c4" name="model" required>
                         <label for="floatingInput">Modelo</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingPassword" placeholder="Solução"
-                               name="product1">
-                        <label for="floatingPassword">Product ID</label>
+                               name="product1" required>
+                        <label for="floatingPassword">Product ID 1</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingPassword" placeholder="Solução"
                                name="product2">
-                        <label for="floatingPassword2">Product ID</label>
+                        <label for="floatingPassword2">Product ID 2</label>
                     </div>
                 </div>
                 <div class="modal-footer">
